@@ -15,7 +15,7 @@ with open(resource_path("assets/russian.txt"), "r", encoding="utf-8") as f:
     text = f.read()
 
     WORDS = [w.strip().upper() for w in text.split(',') if len(w.strip()) > 1]
-
+    
 pygame.init()
 pygame.mixer.init()
 WIDTH, HEIGHT = 900, 600
@@ -38,10 +38,15 @@ font_main = pygame.font.SysFont("Arial", 70, bold=True)
 font_ui = pygame.font.SysFont("Arial", 24)
 
 def reset_game():
-    return random.choice(WORDS).upper(), set(), [], 10, False, False
+    w = random.choice(WORDS).upper()
+    wl = []
+    for letter in w:
+        if letter not in wl:
+            wl.append(letter)
+    return w, set(), [], 10, False, False, wl
 
 def main():
-    word, guessed, used, hp, game_over, win = reset_game()
+    word, guessed, used, hp, game_over, win, wordletters = reset_game()
     btn_rect = pygame.Rect(WIDTH//2 - 100, 450, 200, 60)
     btn_rect2 = pygame.Rect(WIDTH//2 - 125, 450, 250, 60)
 
@@ -77,7 +82,7 @@ def main():
             btn_txt = font_ui.render("ЕЩЁ РАЗ", True, (255, 255, 255))
             screen.blit(btn_txt, (btn_rect.centerx - btn_txt.get_width()//2, btn_rect.centery - btn_txt.get_height()//2))
         else:
-            if hp > 2 and len(guessed) < len(word)-2:
+            if hp > 2 and len(guessed) < len(wordletters)-2:
                 pygame.draw.rect(screen, BTN_COLOR, btn_rect2, border_radius=12)
                 btn_txt = font_ui.render("ПОМОЩЬ (-2 ПОПЫТКИ)", True, (255, 255, 255))
                 screen.blit(btn_txt, (btn_rect2.centerx - btn_txt.get_width()//2, btn_rect2.centery - btn_txt.get_height()//2))
@@ -88,7 +93,7 @@ def main():
             
             if event.type == pygame.KEYDOWN and not game_over:
                 char = event.unicode.upper()
-                if 'А' <= char <= 'Я' and char not in used:
+                if ('А' <= char <= 'Я' or char == 'Ё') and char not in used:
                     if os.path.exists(resource_path(f"assets/{char}.ogg")):
                         letter = pygame.mixer.Sound(resource_path(f"assets/{char}.ogg"))
                         letter.set_volume(0.1)
@@ -100,10 +105,10 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN and game_over:
                 if btn_rect.collidepoint(event.pos):
-                    word, guessed, used, hp, game_over, win = reset_game()
+                    word, guessed, used, hp, game_over, win, wordletters = reset_game()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if btn_rect2.collidepoint(event.pos):
-                    if hp > 2 and len(guessed) < len(word)-2:
+                    if hp > 2 and len(guessed) < len(wordletters)-2:
                         ch = random.choice(word)
                         while ch in guessed:
                             ch = random.choice(word)
