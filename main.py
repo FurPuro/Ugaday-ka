@@ -18,7 +18,7 @@ with open(resource_path("assets/russian.txt"), "r", encoding="utf-8") as f:
     
 pygame.init()
 pygame.mixer.init()
-WIDTH, HEIGHT = 900, 600
+WIDTH, HEIGHT = 1200, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Угадай-ка")
 
@@ -34,8 +34,8 @@ incorrectWord.set_volume(0.1)
 letter = pygame.mixer.Sound(resource_path("assets/А.ogg"))
 letter.set_volume(0.1)
 
-font_main = pygame.font.SysFont("Arial", 70, bold=True)
-font_ui = pygame.font.SysFont("Arial", 24)
+font_main = pygame.font.SysFont("Arial", 98, bold=True)
+font_ui = pygame.font.SysFont("Arial", 40)
 
 def reset_game():
     w = random.choice(WORDS).upper()
@@ -48,7 +48,7 @@ def reset_game():
 def main():
     word, guessed, used, hp, game_over, win, wordletters = reset_game()
     btn_rect = pygame.Rect(WIDTH//2 - 100, 450, 200, 60)
-    btn_rect2 = pygame.Rect(WIDTH//2 - 125, 450, 250, 60)
+    btn_rect2 = pygame.Rect(WIDTH//2 - 200, 450, 400, 60)
 
     running = True
     while running:
@@ -64,14 +64,14 @@ def main():
         
         display = " ".join([l if l in guessed else "_" for l in word])
         txt_surf = font_main.render(display, True, TEXT_COLOR)
-        screen.blit(txt_surf, (WIDTH//2 - txt_surf.get_width()//2, 200))
+        screen.blit(txt_surf, (WIDTH//2 - txt_surf.get_width()//2, 250))
 
         tut = font_ui.render("Чтобы начать играть, нажимайте клавиши на русской раскладке", True, TEXT_COLOR)
         hp_surf = font_ui.render(f"Осталось попыток: {hp} {"!!!" if hp < 5 else ""}", True, TEXT_COLOR)
         used_surf = font_ui.render(f"Использовано: {', '.join(used)}", True, SUB_COLOR)
         screen.blit(tut, (20, 20))
-        screen.blit(hp_surf, (20, 60))
-        screen.blit(used_surf, (20, 85))
+        screen.blit(hp_surf, (20, 80))
+        screen.blit(used_surf, (20, 120))
 
         if game_over:
             msg = "ВЫ ПОБЕДИЛИ!" if win else f"НЕ ПОВЕЗЛО. СЛОВО: {word}"
